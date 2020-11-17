@@ -25,7 +25,6 @@ namespace SodaMachine
                 OutputText("Please step aside to allow another customer to make a selection");
                 return false;
             }
-        
         }
         //For printing out an error message for user to see.  Has built in console clear
         public static void DisplayError(string error)

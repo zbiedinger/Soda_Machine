@@ -26,7 +26,27 @@ namespace SodaMachine
         //A method to fill the sodamachines register with coin objects.
         public void FillRegister()
         {
-           
+            Penny penny = new Penny();
+            Nickel nickel = new Nickel();
+            Dime dime = new Dime();
+            Quarter quarter = new Quarter();
+
+            for (int i = 0; i < 50; i++)
+            {
+                _register.Add(penny);
+            }
+            for (int i = 0; i < 20; i++)
+            {
+                _register.Add(nickel);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                _register.Add(dime);
+            }
+            for (int i = 0; i < 20; i++)
+            {
+                _register.Add(quarter);
+            }
         }
         //A method to fill the sodamachines inventory with soda can objects.
         public void FillInventory()
@@ -55,7 +75,9 @@ namespace SodaMachine
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
         {
-          
+
+            Can changeMe = new OrangeSoda();
+            return changeMe;
         }
 
         //This is the main method for calculating the result of the transaction.
@@ -75,29 +97,34 @@ namespace SodaMachine
         //If the change cannot be made, return null.
         private List<Coin> GatherChange(double changeValue)
         {
-            
+            List<Coin> changeMe = new List<Coin> { };
+            return changeMe;
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
         private bool RegisterHasCoin(string name)
         {
-           
+            bool changeMe = true;
+            return changeMe;
         }
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
         private Coin GetCoinFromRegister(string name)
         {
-            
+            Coin changeMe = new Coin();
+            return changeMe;
         }
         //Takes in the total payment amount and the price of can to return the change amount.
         private double DetermineChange(double totalPayment, double canPrice)
         {
-            
+            double changeMe = 0;
+            return changeMe;
         }
         //Takes in a list of coins to returnt he total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
         {
-           
+            double changeMe = 0;
+            return changeMe;
         }
         //Puts a list of coins into the soda machines register.
         private void DepositCoinsIntoRegister(List<Coin> coins)
