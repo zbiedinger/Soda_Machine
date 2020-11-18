@@ -29,11 +29,23 @@ namespace SodaMachine
             List<Coin> customersPayment = new List<Coin>();
             double changeTotal = 0;
             string reteivedcoin = null;
-                
+            Coin tempCoin = null;
+
             while (changeTotal < selectedCan.Price)
             {
                 reteivedcoin = UserInterface.CoinSelection(selectedCan, customersPayment);
-                customersPayment.Add(GetCoinFromWallet(reteivedcoin));
+                tempCoin = GetCoinFromWallet(reteivedcoin);
+
+                if (tempCoin == null)
+                {
+                    Console.WriteLine($"You have no more {reteivedcoin}.");
+                    Console.WriteLine("Enter to contunes getting coins.");
+                    Console.ReadLine();
+                }
+                else
+                {
+                    customersPayment.Add(tempCoin);
+                }
                 changeTotal = 0;
                 foreach (Coin coin in customersPayment)
                 {
