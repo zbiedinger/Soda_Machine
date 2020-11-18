@@ -51,7 +51,22 @@ namespace SodaMachine
         //A method to fill the sodamachines inventory with soda can objects.
         public void FillInventory()
         {
-            
+            RootBeer rootBeer = new RootBeer();
+            Cola cola = new Cola();
+            OrangeSoda orangeSoda = new OrangeSoda();
+
+            for (int i = 0; i < 5; i++)
+            {
+                _inventory.Add(rootBeer);
+            }
+            for (int i = 0; i < 7; i++)
+            {
+                _inventory.Add(cola);
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                _inventory.Add(orangeSoda);
+            }
         }
         //Method to be called to start a transaction.
         //Takes in a customer which can be passed freely to which ever method needs it.
@@ -70,14 +85,27 @@ namespace SodaMachine
         //pass payment to the calculate transaction method to finish up the transaction based on the results.
         private void Transaction(Customer customer)
         {
-           
+            string selectedSoda = UserInterface.SodaSelection(_inventory);
+            Can selectedCan = GetSodaFromInventory(selectedSoda);
+            UserInterface.DisplayCost(selectedCan);
         }
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
         {
-
-            Can changeMe = new OrangeSoda();
-            return changeMe;
+            Can selectedCan = new RootBeer();
+            foreach (Can can in _inventory)
+            {
+                if (can.Name == nameOfSoda)
+                {
+                    selectedCan = can;
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            return selectedCan;
         }
 
         //This is the main method for calculating the result of the transaction.

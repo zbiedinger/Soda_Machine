@@ -14,14 +14,15 @@ namespace SodaMachine
         public Wallet()
         {
             Coins = new List<Coin>();
-            FillRegister();
+            FillWallet();
         }
+
         //Member Methods (Can Do)
         //Fills wallet with starting money
         /// <summary>
         /// Starts with $5. would like to change based on user input and if they got paid or not
         /// </summary>
-        private void FillRegister()
+        private void FillWallet()
         {
             Penny penny = new Penny();
             Nickel nickel = new Nickel();

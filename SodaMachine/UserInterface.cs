@@ -105,7 +105,6 @@ namespace SodaMachine
         //Takes in a list of sodas to print.
         public static void PrintOptions(List<Can> SodaOptions)
         {
-
            List<Can> uniqueCans = GetUniqueCans(SodaOptions);
            foreach(Can can in uniqueCans)
            {
