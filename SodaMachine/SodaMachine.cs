@@ -85,11 +85,22 @@ namespace SodaMachine
         //pass payment to the calculate transaction method to finish up the transaction based on the results.
         private void Transaction(Customer customer)
         {
-            string selectedSoda = UserInterface.SodaSelection(_inventory);
-            Can selectedCan = GetSodaFromInventory(selectedSoda);
+            string selectedSodaName = UserInterface.SodaSelection(_inventory);
+            Can selectedCan = GetSodaFromInventory(selectedSodaName);
             UserInterface.DisplayCost(selectedCan);
+
+            
+            List<Coin> customersPayment = customer.GatherCoinsFromWallet(selectedCan);
+
+
+            CalculateTransaction(customersPayment, selectedCan, customer);
+            List<Coin> changeBack = GatherChange(0.00);
         }
         //Gets a soda from the inventory based on the name of the soda.
+        /// <summary>
+        /// This is not pretty but it works
+        /// </summary>
+
         private Can GetSodaFromInventory(string nameOfSoda)
         {
             Can selectedCan = new RootBeer();
@@ -151,8 +162,13 @@ namespace SodaMachine
         //Takes in a list of coins to returnt he total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
         {
-            double changeMe = 0;
-            return changeMe;
+            double changeTotal = 0;
+            foreach (Coin coin in payment)
+            {
+                changeTotal += coin.Value;
+            }
+
+            return changeTotal;
         }
         //Puts a list of coins into the soda machines register.
         private void DepositCoinsIntoRegister(List<Coin> coins)
