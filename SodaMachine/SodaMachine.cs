@@ -128,7 +128,7 @@ namespace SodaMachine
                 Console.WriteLine($"Here is your {chosenSoda.Name}.");
                 DepositCoinsIntoRegister(payment);
                 customer.AddCanToBackpack(chosenSoda);
-                Console.ReadLine();
+                customer.DrinkSoda(chosenSoda);
             }
             //If the payment is greater than the price of the soda,
             else if(totalPayment > chosenSoda.Price)
@@ -152,12 +152,13 @@ namespace SodaMachine
                     customer.AddCanToBackpack(chosenSoda);
                     customer.AddCoinsIntoWallet(changeToGiveBack);
 
-                    Console.ReadLine();
+                    customer.DrinkSoda(chosenSoda);
                 }
             }
             else
             {
-                Console.WriteLine("Not enough money.");
+                Console.WriteLine("\nNot enough money.");
+                Console.WriteLine("Herer is your change\n");
                 customer.AddCoinsIntoWallet(payment);
                 _inventory.Add(chosenSoda);
                 //dispense payment back

@@ -34,6 +34,12 @@ namespace SodaMachine
             while (changeTotal < selectedCan.Price)
             {
                 reteivedcoin = UserInterface.CoinSelection(selectedCan, customersPayment);
+                
+                if (reteivedcoin == "Done")
+                {
+                    return customersPayment;
+                }
+
                 tempCoin = GetCoinFromWallet(reteivedcoin);
 
                 if (tempCoin == null)
@@ -51,6 +57,7 @@ namespace SodaMachine
                 {
                     changeTotal += coin.Value;
                 }
+
             }
             return customersPayment; 
         }
@@ -82,8 +89,18 @@ namespace SodaMachine
         //Takes in a can object to add to the customers backpack.
         public void AddCanToBackpack(Can purchasedCan)
         {
+
             Backpack.cans.Add(purchasedCan);
             Backpack.BagRipped();
+        }
+        //Takes in a can object from the customers backpack.
+        public void DrinkSoda(Can can)
+        {
+            if (UserInterface.ContinuePrompt("\nAre you thirsty?"))
+            {
+                Console.WriteLine($"\nThat's a thirst quenching {can.Name}!");
+                Backpack.cans.Remove(can);
+            }
         }
     }
 }

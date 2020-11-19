@@ -17,7 +17,6 @@ namespace SodaMachine
         }
 
         //Member Methods (Can Do)
-
         public void BagRipped()
         {
             if(cans.Count > 6)
