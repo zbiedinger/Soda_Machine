@@ -10,12 +10,14 @@ namespace SodaMachine
     {
         //Member Variables (Has A)
         private List<Coin> _register;
+        private double _creditPayments;
         private List<Can> _inventory;
 
         //Constructor (Spawner)
         public SodaMachine()
         {
             _register = new List<Coin>();
+            _creditPayments = 0;
             _inventory = new List<Can>();
             FillInventory();
             FillRegister();
@@ -89,9 +91,17 @@ namespace SodaMachine
             Can selectedCan = GetSodaFromInventory(selectedSodaName);
             UserInterface.DisplayCost(selectedCan);
 
-            List<Coin> customersPayment = customer.GatherCoinsFromWallet(selectedCan);
+            if(UserInterface.ContinuePrompt("\nPaying by credit card? (y/n)"))
+            {
+                double customersPayment = customer.GatherCoinsFromWallet(selectedCan.Price);
+                CalculateTransaction(customersPayment, selectedCan, customer);
+            }
+            else
+            {
+                List<Coin> customersPayment = customer.GatherCoinsFromWallet(selectedCan);
+                CalculateTransaction(customersPayment, selectedCan, customer);
 
-            CalculateTransaction(customersPayment, selectedCan, customer);
+            }
         }
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
@@ -158,12 +168,31 @@ namespace SodaMachine
             else
             {
                 Console.WriteLine("\nNot enough money.");
-                Console.WriteLine("Herer is your change\n");
+                Console.WriteLine("Here is your change\n");
                 customer.AddCoinsIntoWallet(payment);
                 _inventory.Add(chosenSoda);
                 //dispense payment back
             }
         }
+
+        //This is the method for calculating result of a transation if a credit card it used.
+        private void CalculateTransaction(double payment, Can chosenSoda, Customer customer)
+        {
+            if (payment == chosenSoda.Price)
+            {
+                Console.WriteLine($"Here is your {chosenSoda.Name}.");
+                DepositCoinsIntoRegister(payment);
+                customer.AddCanToBackpack(chosenSoda);
+                customer.DrinkSoda(chosenSoda);
+            }
+            else
+            {
+                Console.WriteLine("\nCard declined.");
+                customer.AddCoinsIntoWallet(payment);
+                _inventory.Add(chosenSoda);
+            }
+        }
+
         //Takes in the value of the amount of change needed.
         //Attempts to gather all the required coins from the sodamachine's register to make change.
         //Returns the list of coins as change to despense.
@@ -278,6 +307,11 @@ namespace SodaMachine
             {
                 _register.Add(coin);
             }
+        }
+        //Puts a list of coins into the soda machines credit payments.
+        private void DepositCoinsIntoRegister(double cardpayment)
+        {
+            _creditPayments += cardpayment;
         }
     }
 }

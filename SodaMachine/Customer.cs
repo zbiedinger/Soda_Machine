@@ -61,6 +61,19 @@ namespace SodaMachine
             }
             return customersPayment; 
         }
+
+        public double GatherCoinsFromWallet(double selectedCanprice)
+        {
+            
+            if(Wallet.bankAccount >= selectedCanprice)
+            {
+                Wallet.bankAccount -= selectedCanprice;
+                return selectedCanprice;
+            }
+
+            return 0;
+        }
+
         //Returns a coin object from the wallet based on the name passed into it.
         //Returns null if no coin can be found
         public Coin GetCoinFromWallet(string coinName)
@@ -86,12 +99,18 @@ namespace SodaMachine
                 Wallet.Coins.Add(coinToAdded);
             }
         }
+        //Takes in a double of the returned payment and adds to bankaccount.
+        public void AddCoinsIntoWallet(double returnedPayment)
+        {
+            Wallet.bankAccount += returnedPayment;
+        }
         //Takes in a can object to add to the customers backpack.
         public void AddCanToBackpack(Can purchasedCan)
         {
 
             Backpack.cans.Add(purchasedCan);
             Backpack.BagRipped();
+            Console.WriteLine($"\nYou have {Backpack.cans.Count} can in your backpack.");
         }
         //Takes in a can object from the customers backpack.
         public void DrinkSoda(Can can)

@@ -11,7 +11,7 @@ namespace SodaMachine
         //Intro message that asks user if they wish to make a purchase
         public static bool DisplayWelcomeInstructions(List<Can> sodaOptions)
         {
-            OutputText("\nWelcome to the soda machine.  We only take coins as payment \n");
+            OutputText("\nWelcome to the soda machine.  We now take coin and card payments \n");
             OutputText("At a glance, these are the drink options:\n");
             PrintOptions(sodaOptions);
             bool willProceed = ContinuePrompt("\nWould you like to make a purchase? (y/n)");
@@ -163,7 +163,7 @@ namespace SodaMachine
                 case "no":
                     return false;
                 default:
-                    OutputText("Invalid input");
+                    OutputText("\nInvalid input");
                     return ContinuePrompt(output);
             }
         }

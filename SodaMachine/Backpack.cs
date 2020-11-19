@@ -19,7 +19,7 @@ namespace SodaMachine
         //Member Methods (Can Do)
         public void BagRipped()
         {
-            if(cans.Count > 6)
+            if(cans.Count > 4)
             {
                 Console.WriteLine("\nYour bag ripped and lost all your cans of soda!");
                 cans.Clear();
