@@ -57,12 +57,11 @@ namespace SodaMachine
                 {
                     changeTotal += coin.Value;
                 }
-
             }
             return customersPayment; 
         }
-
-        public double GatherCoinsFromWallet(double selectedCanprice)
+        //This method will be the main logic for a customer
+        public double ReceivePaymentFromCard(double selectedCanprice)
         {
             
             if(Wallet.bankAccount >= selectedCanprice)
@@ -70,7 +69,6 @@ namespace SodaMachine
                 Wallet.bankAccount -= selectedCanprice;
                 return selectedCanprice;
             }
-
             return 0;
         }
 
@@ -87,7 +85,6 @@ namespace SodaMachine
                 }
                 else { continue; }
             }
-
             return null;
         }
         //Takes in a list of coin objects to add into the customers wallet.
@@ -100,14 +97,13 @@ namespace SodaMachine
             }
         }
         //Takes in a double of the returned payment and adds to bankaccount.
-        public void AddCoinsIntoWallet(double returnedPayment)
+        public void AddMoneyToCard(double returnedPayment)
         {
             Wallet.bankAccount += returnedPayment;
         }
         //Takes in a can object to add to the customers backpack.
         public void AddCanToBackpack(Can purchasedCan)
         {
-
             Backpack.cans.Add(purchasedCan);
             Backpack.BagRipped();
             Console.WriteLine($"\nYou have {Backpack.cans.Count} can in your backpack.");
@@ -115,7 +111,7 @@ namespace SodaMachine
         //Takes in a can object from the customers backpack.
         public void DrinkSoda(Can can)
         {
-            if (UserInterface.ContinuePrompt("\nAre you thirsty?"))
+            if (UserInterface.ContinuePrompt("\nAre you thirsty? (y/n)"))
             {
                 Console.WriteLine($"\nThat's a thirst quenching {can.Name}!");
                 Backpack.cans.Remove(can);

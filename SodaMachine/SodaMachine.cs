@@ -13,6 +13,7 @@ namespace SodaMachine
         private double _creditPayments;
         private List<Can> _inventory;
 
+
         //Constructor (Spawner)
         public SodaMachine()
         {
@@ -23,8 +24,8 @@ namespace SodaMachine
             FillRegister();
         }
 
-        //Member Methods (Can Do)
 
+        //Member Methods (Can Do)
         //A method to fill the sodamachines register with coin objects.
         public void FillRegister()
         {
@@ -50,12 +51,14 @@ namespace SodaMachine
                 _register.Add(penny);
             }
         }
+        
         //A method to fill the sodamachines inventory with soda can objects.
         public void FillInventory()
         {
             RootBeer rootBeer = new RootBeer();
             Cola cola = new Cola();
             OrangeSoda orangeSoda = new OrangeSoda();
+            MysterySoda flavorBlast = new MysterySoda();
 
             for (int i = 0; i < 5; i++)
             {
@@ -69,7 +72,12 @@ namespace SodaMachine
             {
                 _inventory.Add(orangeSoda);
             }
+            for (int i = 0; i < 3; i++)
+            {
+                _inventory.Add(flavorBlast);
+            }
         }
+        
         //Method to be called to start a transaction.
         //Takes in a customer which can be passed freely to which ever method needs it.
         public void BeginTransaction(Customer customer)
@@ -93,16 +101,16 @@ namespace SodaMachine
 
             if(UserInterface.ContinuePrompt("\nPaying by credit card? (y/n)"))
             {
-                double customersPayment = customer.GatherCoinsFromWallet(selectedCan.Price);
+                double customersPayment = customer.ReceivePaymentFromCard(selectedCan.Price);
                 CalculateTransaction(customersPayment, selectedCan, customer);
             }
             else
             {
                 List<Coin> customersPayment = customer.GatherCoinsFromWallet(selectedCan);
                 CalculateTransaction(customersPayment, selectedCan, customer);
-
             }
         }
+        
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
         {
@@ -132,21 +140,18 @@ namespace SodaMachine
         {
             double totalPayment = TotalCoinValue(payment);
 
-            //If the payment is exact to the cost of the soda:  Dispense soda.
             if (totalPayment == chosenSoda.Price)
             {
                 Console.WriteLine($"Here is your {chosenSoda.Name}.");
-                DepositCoinsIntoRegister(payment);
+                DepositPaymentIntoRegister(payment);
                 customer.AddCanToBackpack(chosenSoda);
                 customer.DrinkSoda(chosenSoda);
             }
-            //If the payment is greater than the price of the soda,
             else if(totalPayment > chosenSoda.Price)
             {
                 double changeValue = DetermineChange(totalPayment, chosenSoda.Price);
                 List<Coin> changeToGiveBack = GatherChange(changeValue);
                 
-                //machine does not have ample change: Dispense payment back to the customer.
                 if (changeToGiveBack == null) 
                 {
                     Console.WriteLine($"Not enough change in register. Here is your money back.");
@@ -155,13 +160,11 @@ namespace SodaMachine
                 }
                 else
                 {
-                    //if the sodamachine has enough change to return: Dispense soda, and change to the customer.
                     Console.WriteLine($"Here is your {chosenSoda.Name}.");
                     Console.WriteLine($"Here is your change: {changeValue}");
-                    DepositCoinsIntoRegister(payment);
+                    DepositPaymentIntoRegister(payment);
                     customer.AddCanToBackpack(chosenSoda);
                     customer.AddCoinsIntoWallet(changeToGiveBack);
-
                     customer.DrinkSoda(chosenSoda);
                 }
             }
@@ -171,7 +174,6 @@ namespace SodaMachine
                 Console.WriteLine("Here is your change\n");
                 customer.AddCoinsIntoWallet(payment);
                 _inventory.Add(chosenSoda);
-                //dispense payment back
             }
         }
 
@@ -181,14 +183,14 @@ namespace SodaMachine
             if (payment == chosenSoda.Price)
             {
                 Console.WriteLine($"Here is your {chosenSoda.Name}.");
-                DepositCoinsIntoRegister(payment);
+                DepositPaymentIntoRegister(payment);
                 customer.AddCanToBackpack(chosenSoda);
                 customer.DrinkSoda(chosenSoda);
             }
             else
             {
                 Console.WriteLine("\nCard declined.");
-                customer.AddCoinsIntoWallet(payment);
+                customer.AddMoneyToCard(payment);
                 _inventory.Add(chosenSoda);
             }
         }
@@ -253,6 +255,7 @@ namespace SodaMachine
                 return null;
             }
         }
+        
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
         private bool RegisterHasCoin(string name)
@@ -266,6 +269,7 @@ namespace SodaMachine
             }
             return false;
         }
+        
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
         private Coin GetCoinFromRegister(string name)
@@ -279,16 +283,16 @@ namespace SodaMachine
                 }
                 else { continue; }
             }
-
             return null;
-
         }
+        
         //Takes in the total payment amount and the price of can to return the change amount.
         private double DetermineChange(double totalPayment, double canPrice)
         {
             double changeValue = totalPayment - canPrice;
             return changeValue;
         }
+        
         //Takes in a list of coins to returnt he total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
         {
@@ -297,19 +301,20 @@ namespace SodaMachine
             {
                 changeTotal += coin.Value;
             }
-
             return changeTotal;
         }
+        
         //Puts a list of coins into the soda machines register.
-        private void DepositCoinsIntoRegister(List<Coin> coins)
+        private void DepositPaymentIntoRegister(List<Coin> coins)
         {
             foreach (Coin coin in coins)
             {
                 _register.Add(coin);
             }
         }
-        //Puts a list of coins into the soda machines credit payments.
-        private void DepositCoinsIntoRegister(double cardpayment)
+
+        //Puts a card payment into the soda machine.
+        private void DepositPaymentIntoRegister(double cardpayment)
         {
             _creditPayments += cardpayment;
         }
