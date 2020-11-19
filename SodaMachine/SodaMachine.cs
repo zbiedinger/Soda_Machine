@@ -89,7 +89,6 @@ namespace SodaMachine
             Can selectedCan = GetSodaFromInventory(selectedSodaName);
             UserInterface.DisplayCost(selectedCan);
 
-            
             List<Coin> customersPayment = customer.GatherCoinsFromWallet(selectedCan);
 
             CalculateTransaction(customersPayment, selectedCan, customer);
@@ -126,8 +125,9 @@ namespace SodaMachine
             //If the payment is exact to the cost of the soda:  Dispense soda.
             if (totalPayment == chosenSoda.Price)
             {
-                Console.WriteLine($"here is your {chosenSoda.Name}.");
+                Console.WriteLine($"Here is your {chosenSoda.Name}.");
                 DepositCoinsIntoRegister(payment);
+                customer.AddCanToBackpack(chosenSoda);
                 Console.ReadLine();
             }
             //If the payment is greater than the price of the soda,
@@ -139,15 +139,18 @@ namespace SodaMachine
                 //machine does not have ample change: Dispense payment back to the customer.
                 if (changeToGiveBack == null) 
                 {
-                    Console.WriteLine($"not enough change in register. Here is your money back.");
+                    Console.WriteLine($"Not enough change in register. Here is your money back.");
+                    _inventory.Add(chosenSoda);
                     Console.ReadLine();
                 }
                 else
                 {
                     //if the sodamachine has enough change to return: Dispense soda, and change to the customer.
-                    Console.WriteLine($"here is your {chosenSoda.Name}.");
-                    Console.WriteLine($"here is your change: {changeValue}");
+                    Console.WriteLine($"Here is your {chosenSoda.Name}.");
+                    Console.WriteLine($"Here is your change: {changeValue}");
                     DepositCoinsIntoRegister(payment);
+                    customer.AddCanToBackpack(chosenSoda);
+                    customer.AddCoinsIntoWallet(changeToGiveBack);
 
                     Console.ReadLine();
                 }
@@ -155,6 +158,8 @@ namespace SodaMachine
             else
             {
                 Console.WriteLine("Not enough money.");
+                customer.AddCoinsIntoWallet(payment);
+                _inventory.Add(chosenSoda);
                 //dispense payment back
             }
         }
@@ -162,25 +167,56 @@ namespace SodaMachine
         //Attempts to gather all the required coins from the sodamachine's register to make change.
         //Returns the list of coins as change to despense.
         //If the change cannot be made, return null.
-        /// <summary>
-        /// This doesn't actually work. it will always give back some change even it if doesnt have it.
-        /// </summary>
         private List<Coin> GatherChange(double changeValue)
         {
             double changeInReg = TotalCoinValue(_register);
+            double placeHolderChangeValue = changeValue;
+            List<Coin> ChangeGivenBack = new List<Coin>();
 
-            if (changeInReg >= changeValue)
+            if (changeInReg > changeValue)
             {
-                List<Coin> ChangeGivenBack = new List<Coin>();
-                foreach (Coin coin in _register)
+                while(placeHolderChangeValue >= 0.25)
                 {
-                    if (coin.Value <= changeInReg)
+                    if (RegisterHasCoin("Quarter"))
                     {
-                        ChangeGivenBack.Add(coin);
-                        changeInReg -= coin.Value;
-                    } 
+                        ChangeGivenBack.Add(GetCoinFromRegister("Quarter"));
+                        placeHolderChangeValue -= 0.25;
+                    }
+                    else { break; }
+                }
+                while (placeHolderChangeValue >= 0.1)
+                {
+                    if (RegisterHasCoin("Dime"))
+                    {
+                        ChangeGivenBack.Add(GetCoinFromRegister("Dime"));
+                        placeHolderChangeValue -= 0.1;
+                    }
+                    else { break; }
+                }
+                while (placeHolderChangeValue >= 0.05)
+                {
+                    if (RegisterHasCoin("Nickel"))
+                    {
+                        ChangeGivenBack.Add(GetCoinFromRegister("Nickel"));
+                        placeHolderChangeValue -= 0.05;
+                    }
+                    else { break; }
+                }
+                while (placeHolderChangeValue >= 0.01)
+                {
+                    if (RegisterHasCoin("Penny"))
+                    {
+                        ChangeGivenBack.Add(GetCoinFromRegister("Penny"));
+                        placeHolderChangeValue -= 0.01;
+                    }
+                    else { break; }
                 }
                 return ChangeGivenBack;
+            }
+            else if (changeInReg == changeValue)
+            {
+                _register.Clear();
+                return _register;
             }
             else
             {
@@ -191,15 +227,31 @@ namespace SodaMachine
         //If it does have one, return true.  Else, false.
         private bool RegisterHasCoin(string name)
         {
-            bool changeMe = true;
-            return changeMe;
+            foreach (Coin coin in _register)
+            {
+                if (coin.Name == name)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
         private Coin GetCoinFromRegister(string name)
         {
-            Coin changeMe = new Coin();
-            return changeMe;
+            foreach (Coin coin in _register)
+            {
+                if (coin.Name == name)
+                {
+                    _register.Remove(coin);
+                    return coin;
+                }
+                else { continue; }
+            }
+
+            return null;
+
         }
         //Takes in the total payment amount and the price of can to return the change amount.
         private double DetermineChange(double totalPayment, double canPrice)
